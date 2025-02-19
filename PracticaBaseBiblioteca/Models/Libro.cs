@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+
 namespace PracticaBaseBiblioteca.Models
 {
-    public class Libros
+    public class Libro
     {
         [Key]
         public int IdLibro { get; set; }
@@ -10,11 +11,10 @@ namespace PracticaBaseBiblioteca.Models
 
         public int AñoPublicacion { get; set; }
 
-        public int IdAutor {  get; set; }
+        public int IdAutor { get; set; }
 
         public int IdCategoria { get; set; }
 
-        public string Resumen {  get; set; }
-
+        public string Resumen { get; set; }
     }
 }
