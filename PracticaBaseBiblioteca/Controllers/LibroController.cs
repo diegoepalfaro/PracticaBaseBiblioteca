@@ -37,6 +37,38 @@ namespace PracticaBaseBiblioteca.Controllers
             return Ok(listadoLibros);
         }
 
+        ///<sumary>
+        ///Endpoint que retorna los registros de una tabla filtrada por su ID
+        ///</sumary>
+        ///<param name="id"></param>
+        ///<returns></returns>
+
+        [HttpGet]
+        [Route("GetById/{id}")]
+        public IActionResult Get(int id)
+        {
+            var listadoLibro = (from e in _BibliotecaContexto.Libro
+                                      join a in _BibliotecaContexto.Autor
+                                            on e.IdAutor equals a.IdAutor
+                                      where e.IdLibro == id
+                                      select new
+                                      {
+                                        e.IdLibro,
+                                        e.Título,
+                                        e.AñoPublicacion,
+                                        e.IdAutor,
+                                        Autor= a.Nombre,
+                                        e.IdCategoria,
+                                        e.Resumen
+
+                                      }).ToList();
+
+            if (listadoLibro == null)
+            {
+                return NotFound();
+            }
+            return Ok(listadoLibro);
+        }
 
 
     }
