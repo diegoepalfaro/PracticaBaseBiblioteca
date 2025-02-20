@@ -38,7 +38,7 @@ namespace PracticaBaseBiblioteca.Controllers
         }
 
         ///<sumary>
-        ///Endpoint que retorna los registros de una tabla filtrada por su ID
+        ///Endpoint que retorna los registros de libros por si id e incluyendo el nombre de su autor
         ///</sumary>
         ///<param name="id"></param>
         ///<returns></returns>
@@ -70,6 +70,68 @@ namespace PracticaBaseBiblioteca.Controllers
             return Ok(listadoLibro);
         }
 
+        [HttpPost]
+        [Route("Add")]
+        public IActionResult GuardarLibro([FromBody] Libro libro)
+        {
+            try
+            {
+                _BibliotecaContexto.Libro.Add(libro);
+                _BibliotecaContexto.SaveChanges();
+                return Ok(libro);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("actualizar/{id}")]
+
+        public IActionResult ActualizarLibro(int id, [FromBody] Libro libroModificar)
+        {
+            //Para actualizar un registro primero se accede a el desde la base
+            Libro? libroActual = (from e in _BibliotecaContexto.Libro
+                                     where e.IdLibro == id
+                                     select e).FirstOrDefault();
+            //Se verifica que exista segun su ID
+            if (libroActual == null)
+            { return NotFound(); }
+
+            //Si se ecuentra se altera
+            libroActual.Título = libroModificar.Título;
+            libroActual.AñoPublicacion = libroModificar.AñoPublicacion;
+            libroActual.IdAutor = libroModificar.IdAutor;
+            libroActual.IdCategoria = libroModificar.IdCategoria;
+            libroActual.Resumen = libroModificar.Resumen;
+            
+
+            //Se marca como modificado y se envía
+            _BibliotecaContexto.Entry(libroActual).State = EntityState.Modified;
+            _BibliotecaContexto.SaveChanges();
+            return Ok(libroModificar);
+        }
+
+        [HttpDelete]
+        [Route("eliminar/{id}")]
+        public IActionResult EliminarLibro(int id)
+        {
+            //Se obtiene el original de la base
+            Libro? libro = (from e in _BibliotecaContexto.Libro
+                               where e.IdLibro == id
+                               select e).FirstOrDefault();
+            //Verificar si existe
+            if (libro == null)
+                return NotFound();
+
+            //Se elimina el registro
+            _BibliotecaContexto.Libro.Attach(libro);
+            _BibliotecaContexto.Libro.Remove(libro);
+            _BibliotecaContexto.SaveChanges();
+            return Ok(libro);
+        }
 
     }
 }
